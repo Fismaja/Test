@@ -2,12 +2,14 @@ const fetch = require("node-fetch");
 
 module.exports = async (req, res) => {
   try {
-    const response = await fetch(
-      "https://api.binance.com/api/v3/ticker/price?symbol=GOVUSDT"
-    );
+    const response = await fetch("https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=GOV", {
+      headers: {
+        'X-CMC_PRO_API_KEY': '01e0ee8f-b5bb-4ff8-8912-bc7e03b49dd8'
+      }
+    });
 
     if (!response.ok) {
-      throw new Error("Failed to fetch from Binance");
+      throw new Error("Failed to fetch from CoinMarketCap");
     }
 
     const data = await response.json();
