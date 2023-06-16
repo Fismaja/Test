@@ -1,22 +1,26 @@
-// This is the content of the proxy.js file
+const fetch = require("node-fetch");
+
 module.exports = async (req, res) => {
-    const fetch = require('node-fetch');
-
-    // Set CORS headers
-    res.setHeader('Access-Control-Allow-Credentials', true);
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-
-    const apiKey = '01e0ee8f-b5bb-4ff8-8912-bc7e03b49dd8';
-    const apiUrl = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=GOV';
-
-    const response = await fetch(apiUrl, {
+  try {
+    const response = await fetch(
+      "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=GOV",
+      {
         headers: {
-            'X-CMC_PRO_API_KEY': apiKey
-        }
-    });
+          "X-CMC_PRO_API_KEY": "01e0ee8f-b5bb-4ff8-8912-bc7e03b49dd8",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch from CoinMarketCap");
+    }
 
     const data = await response.json();
 
-    res.status(200).send(data);
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Cache-Control", "s-maxage=3600, stale-while-revalidate");
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
